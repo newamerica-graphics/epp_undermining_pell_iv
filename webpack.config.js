@@ -21,7 +21,7 @@ module.exports = env => {
       env.deploy === "development" && new webpack.HotModuleReplacementPlugin(),
       new HtmlWebpackPlugin({
         title: "",
-        chartIDs: [],
+        chartIDs: ["viz__1"],
         inject: false,
         template: path.resolve(__dirname, "src/index.html")
       }),
@@ -43,7 +43,7 @@ module.exports = env => {
             presets: ["@babel/env", "@babel/preset-react"],
             plugins: [
               "@babel/plugin-proposal-class-properties",
-              "babel/plugin-proposal-object-rest-spread"
+              "@babel/plugin-proposal-object-rest-spread"
             ]
           }
         },

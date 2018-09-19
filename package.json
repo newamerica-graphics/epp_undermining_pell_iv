@@ -16,6 +16,7 @@
   "dependencies": {
     "@vx/axis": "0.0.173",
     "@vx/event": "0.0.165",
+    "@vx/glyph": "0.0.170",
     "@vx/group": "0.0.170",
     "@vx/legend": "0.0.170",
     "@vx/mock-data": "0.0.165",
@@ -23,10 +24,12 @@
     "@vx/scale": "0.0.165",
     "@vx/shape": "0.0.171",
     "@vx/tooltip": "0.0.165",
+    "d3": "^5.7.0",
     "d3-array": "^1.2.4",
     "d3-geo": "^1.11.1",
     "react": "^16.5.0",
     "react-dom": "^16.5.0",
+    "react-select": "^2.0.0",
     "topojson-client": "^3.0.0"
   },
   "devDependencies": {
