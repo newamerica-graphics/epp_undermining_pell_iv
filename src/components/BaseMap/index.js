@@ -30,7 +30,7 @@ class BaseMap extends React.Component {
             [this.props.width, this.props.height],
             feature(world, world.objects.countries)
           );
-          this.props.projectionInit(projection);
+          this.props.projectionInit && this.props.projectionInit(projection);
           this.setState({
             features: feature(world, world.objects.countries).features,
             path: geoPath().projection(projection)
@@ -50,7 +50,7 @@ class BaseMap extends React.Component {
             [this.props.width, this.props.height],
             feature(us, us.objects.states)
           );
-          this.props.projectionInit(projection);
+          this.props.projectionInit && this.props.projectionInit(projection);
           this.setState({
             features: feature(us, us.objects.states).features,
             path: geoPath().projection(projection)
@@ -61,19 +61,22 @@ class BaseMap extends React.Component {
 
   render() {
     const { path, features } = this.state;
+    const { fillFunc } = this.props;
     return (
       <svg viewBox={`0 0 ${this.props.width} ${this.props.height}`}>
         <g className="geometry">
-          {features.map((d, i) => (
-            <path
-              key={`path-${i}`}
-              d={path(d)}
-              fill="#CBCBCD"
-              stroke="#FFFFFF"
-            />
-          ))}
+          {features.map((d, i) => {
+            return (
+              <path
+                key={`path-${i}`}
+                d={path(d)}
+                fill={fillFunc ? fillFunc(d.id) : "#CBCBCD"}
+                stroke="#FFFFFF"
+              />
+            );
+          })}
         </g>
-        <g className="data">{this.props.children}</g>
+        {this.props.children && <g className="data">{this.props.children}</g>}
       </svg>
     );
   }

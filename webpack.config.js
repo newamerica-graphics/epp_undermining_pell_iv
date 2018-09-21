@@ -21,7 +21,7 @@ module.exports = env => {
       env.deploy === "development" && new webpack.HotModuleReplacementPlugin(),
       new HtmlWebpackPlugin({
         title: "",
-        chartIDs: ["viz__1"],
+        chartIDs: ["viz__1", "viz__2", "viz__3"],
         inject: false,
         template: path.resolve(__dirname, "src/index.html")
       }),
@@ -47,10 +47,7 @@ module.exports = env => {
             ]
           }
         },
-        {
-          test: /\.s?css/,
-          use: ["style-loader", "css-loader", "sass-loader"]
-        }
+        { test: /\.s?css/, use: ["style-loader", "css-loader", "sass-loader"] }
       ]
     }
   };
