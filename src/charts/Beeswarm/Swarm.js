@@ -12,7 +12,9 @@ import { selectAll } from "d3-selection";
 import { format } from "d3-format";
 import { max, median } from "d3-array";
 import { scaleLinear } from "d3-scale";
+import { localPoint } from '@vx/event';
 import { forceSimulation, forceX, forceY, forceCollide } from "d3-force";
+import "./Swarm.scss";
 
 class Swarm extends React.Component {
   constructor(props) {
@@ -27,7 +29,8 @@ class Swarm extends React.Component {
       return {
         school: d.school,
         state: d.state,
-        price: parseFloat(d["price2015"]),
+        price2015: parseFloat(d["price2015"]),
+        price2010: parseFloat(d["price2010"]),
         id: d.id
       };
     });
@@ -35,24 +38,34 @@ class Swarm extends React.Component {
       return {
         school: d.school,
         state: d.state,
-        price: parseFloat(d["price2010"]),
+        price2015: parseFloat(d["price2015"]),
+        price2010: parseFloat(d["price2010"]),
         id: d.id
       };
     });
     this.hoverTimeout = null;
   }
 
+  handleMouseOver = (event, datum) => {
+    const coords = localPoint(event.target.ownerSVGElement, event);
+    this.props.showTooltip({
+      tooltipLeft: coords.x,
+      tooltipTop: coords.y,
+      tooltipData: datum
+    });
+  };
+
   runSimulation = memoizeOne((xMax, height) => {
     this.x = scaleLinear()
       .rangeRound([this.margin.left, xMax])
-      .domain([0, max(this.data2015, d => d.price)]);
+      .domain([0, max(this.data2015, d => d.price2015)]);
     const sim1 = forceSimulation(this.data2015)
-      .force("x", forceX(d => this.x(d.price)).strength(1))
+      .force("x", forceX(d => this.x(d.price2015)).strength(1))
       .force("y", forceY(height / 4))
       .force("collide", forceCollide(7))
       .stop();
     const sim2 = forceSimulation(this.data2010)
-      .force("x", forceX(d => this.x(d.price)).strength(1))
+      .force("x", forceX(d => this.x(d.price2010)).strength(1))
       .force("y", forceY((3 * height) / 4))
       .force("collide", forceCollide(7))
       .stop();
@@ -97,38 +110,33 @@ class Swarm extends React.Component {
                   r={5}
                   cx={d.x}
                   cy={d.y}
-                  fill={search.hasOwnProperty(d.id) ? "#A64046" : "#62CDC6"}
+                  fill={search.hasOwnProperty(d.id) ? "#FF2D44" : "#22C8A3"}
+                  stroke="rgba(51,51,51,0.6)"
                   opacity={
                     search.hasOwnProperty(d.id) ||
                     Object.keys(search).length === 0
                       ? 1
-                      : 0.4
+                      : 0.3
                   }
                   className={`id-${d.id}`}
                   onMouseEnter={e => {
-                    {
-                      /* this.hoverTimeout = setTimeout(() => {
-                      selectAll(`circle`).style("opacity", 0.2);
-                      selectAll(`.id-${d.id}`).style("opacity", 1);
-                    }, 200); */
-                    }
+                    this.hoverTimeout = setTimeout(() => {
+                      selectAll(`circle`).classed("o-30", true);
+                      selectAll(`.id-${d.id}`)
+                        .classed("o-1", true)
+                        .classed("o-30", false);
+                    }, 300);
                     selectAll(`.id-${d.id}`)
                       .attr("stroke", "#111")
                       .attr("stroke-width", 2);
-                    this.props.showTooltip({
-                      tooltipLeft: d.x,
-                      tooltipTop: d.y,
-                      tooltipData: d
-                    });
+                    this.handleMouseOver(e, d)
                   }}
                   onMouseLeave={e => {
-                    {
-                      /* clearTimeout(this.hoverTimeout);
-                    selectAll(`circle`).style("opacity", 1); */
-                    }
+                    clearTimeout(this.hoverTimeout);
+                    selectAll(`circle`).classed("o-30 o-1", false);
                     selectAll(`.id-${d.id}`)
-                      .attr("stroke", "none")
-                      .attr("stroke-width", 0);
+                      .attr("stroke", "rgba(51,51,51,0.6)")
+                      .attr("stroke-width", 1);
                     this.props.hideTooltip();
                   }}
                 />
@@ -137,19 +145,19 @@ class Swarm extends React.Component {
             <Marker
               from={
                 new Point({
-                  x: this.x(median(this.data2015, d => d.price)),
+                  x: this.x(median(this.data2015, d => d.price2015)),
                   y: this.margin.top
                 })
               }
               to={
                 new Point({
-                  x: this.x(median(this.data2015, d => d.price)),
+                  x: this.x(median(this.data2015, d => d.price2015)),
                   y: 300
                 })
               }
               stroke={"#2C2F35"}
-              label={`Median Price: ${format("$,")(
-                median(this.data2015, d => d.price)
+              label={`Median Price: ${format("$,.0f")(
+                median(this.data2015, d => d.price2015)
               )}`}
               labelStroke={"none"}
               labelDx={6}
@@ -172,7 +180,7 @@ class Swarm extends React.Component {
                   r={5}
                   cx={d.x}
                   cy={d.y}
-                  fill={search.hasOwnProperty(d.id) ? "#A64046" : "#62CDC6"}
+                  fill={search.hasOwnProperty(d.id) ? "#FF2D44" : "#22C8A3"}
                   opacity={
                     search.hasOwnProperty(d.id) ||
                     Object.keys(search).length === 0
@@ -180,20 +188,25 @@ class Swarm extends React.Component {
                       : 0.4
                   }
                   className={`id-${d.id}`}
+                  stroke="rgba(51,51,51,0.6)"
                   onMouseEnter={e => {
+                    this.hoverTimeout = setTimeout(() => {
+                      selectAll(`circle`).classed("o-30", true);
+                      selectAll(`.id-${d.id}`)
+                        .classed("o-1", true)
+                        .classed("o-30", false);
+                    }, 300);
                     selectAll(`.id-${d.id}`)
                       .attr("stroke", "#111")
-                      .attr("stroke-width", 1);
-                    this.props.showTooltip({
-                      tooltipLeft: d.x,
-                      tooltipTop: d.y,
-                      tooltipData: d
-                    });
+                      .attr("stroke-width", 2);
+                    this.handleMouseOver(e, d)
                   }}
                   onMouseLeave={e => {
+                    clearTimeout(this.hoverTimeout);
+                    selectAll(`circle`).classed("o-30 o-1", false);
                     selectAll(`.id-${d.id}`)
-                      .attr("stroke", "none")
-                      .attr("stroke-width", 0);
+                      .attr("stroke", "rgba(51,51,51,0.6)")
+                      .attr("stroke-width", 1);
                     this.props.hideTooltip();
                   }}
                 />
@@ -202,19 +215,19 @@ class Swarm extends React.Component {
             <Marker
               from={
                 new Point({
-                  x: this.x(median(this.data2010, d => d.price)),
+                  x: this.x(median(this.data2010, d => d.price2010)),
                   y: 400
                 })
               }
               to={
                 new Point({
-                  x: this.x(median(this.data2010, d => d.price)),
+                  x: this.x(median(this.data2010, d => d.price2010)),
                   y: 650
                 })
               }
               stroke={"#2C2F35"}
-              label={`Median Price: ${format("$,")(
-                median(this.data2010, d => d.price)
+              label={`Median Price: ${format("$,.0f")(
+                median(this.data2010, d => d.price2010)
               )}`}
               labelStroke={"none"}
               labelDx={6}
@@ -241,18 +254,33 @@ class Swarm extends React.Component {
           <TooltipWithBounds
             left={this.props.tooltipLeft}
             top={this.props.tooltipTop}
-            style={{ padding: "15px" }}
+            style={{
+              padding: "1rem",
+              borderRadius: 0,
+              boxShadow:
+                "0 2px 5px 0 rgba(0, 0, 0, 0.15), 0 2px 10px 0 rgba(0, 0, 0, 0.1)",
+              color: "#333333"
+            }}
           >
-            <div style={{ paddingBottom: "0.25rem", fontSize: "14px" }}>
-              <strong>School: </strong>
+            <h4
+              style={{
+                marginTop: 0,
+                marginBottom: "0.5rem",
+                fontSize: "1rem"
+              }}
+            >
               {this.props.tooltipData.school}
-            </div>
-            <div style={{ paddingBottom: "0.25rem", fontSize: "14px" }}>
+            </h4>
+            <div style={{ paddingBottom: "0.5rem", fontSize: "14px" }}>
               <strong>State: </strong> {this.props.tooltipData.state}
             </div>
-            <div style={{ paddingBottom: "0.25rem", fontSize: "14px" }}>
-              <strong>Net Price: </strong>{" "}
-              {format("$,")(this.props.tooltipData.price)}
+            <div style={{ paddingBottom: "0.5rem", fontSize: "14px" }}>
+              <strong>Net Price (2015-2016): </strong>{" "}
+              {format("$,.0f")(this.props.tooltipData.price2015)}
+            </div>
+            <div style={{ paddingBottom: "0.5rem", fontSize: "14px" }}>
+              <strong>Net Price (2010-2011): </strong>{" "}
+              {format("$,.0f")(this.props.tooltipData.price2010)}
             </div>
           </TooltipWithBounds>
         )}
