@@ -1,0 +1,10 @@
+@import '../../scss/_breakpoints.scss';
+
+.choropleth-container {
+  display: flex;
+}
+
+.choropleth-legend {
+  padding: 2rem 0 0 4rem; 
+  flex-shrink: 0;
+}

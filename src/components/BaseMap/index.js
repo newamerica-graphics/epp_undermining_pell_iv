@@ -61,7 +61,7 @@ class BaseMap extends React.Component {
 
   render() {
     const { path, features } = this.state;
-    const { fillFunc } = this.props;
+    const { fillFunc, mouseIn, mouseOut } = this.props;
     return (
       <svg viewBox={`0 0 ${this.props.width} ${this.props.height}`}>
         <g className="geometry">
@@ -72,6 +72,8 @@ class BaseMap extends React.Component {
                 d={path(d)}
                 fill={fillFunc ? fillFunc(d.id) : "#CBCBCD"}
                 stroke="#FFFFFF"
+                onMouseMove={e => mouseIn(e, d)}
+                onMouseOut={mouseOut}
               />
             );
           })}
