@@ -18,7 +18,7 @@ module.exports = env => {
       newamericadotorg: "newamericadotorg"
     },
     plugins: [
-      env.deploy === "development" && new webpack.HotModuleReplacementPlugin(),
+      env.NODE_ENV === "development" && new webpack.HotModuleReplacementPlugin(),
       new HtmlWebpackPlugin({
         title: "",
         chartIDs: ["viz__1", "viz__2", "viz__3"],
