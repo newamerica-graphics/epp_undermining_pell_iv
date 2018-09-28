@@ -1,8 +1,8 @@
-import "./index.scss";
 import Beeswarm from "./charts/Beeswarm";
 import ChoroplethMap from "./charts/ChoroplethMap";
 import { DataTableWithSearch } from "./charts/DataTable";
 import { format } from "d3-format";
+import "./index.scss";
 
 let queue = [];
 let data = null;
@@ -11,8 +11,7 @@ const settings = {
   viz__1: el => {
     ReactDOM.render(
       <Beeswarm
-        title="Over 50% of public universities are charging low income students over $10,000"
-        source="test"
+        title={data["meta"].filter(row => row.chart === "viz__1")[0].title}
         data={data["viz__1"].map((d, i) => {
           return {
             school: d.school,
@@ -30,8 +29,7 @@ const settings = {
   viz__2: el => {
     ReactDOM.render(
       <ChoroplethMap
-        title="test"
-        source="test"
+        title={data["meta"].filter(row => row.chart === "viz__2")[0].title}
         data={data["viz__2"]}
         width={1200}
         height={600}
@@ -47,7 +45,7 @@ const settings = {
 
 function dataTableInit(el) {
   const columns = [
-    { Header: "School", accessor: "school" },
+    { Header: "School", accessor: "school", minWidth: 200 },
     { Header: "State", accessor: "state" },
     {
       Header: "Percent Pell",
@@ -60,15 +58,17 @@ function dataTableInit(el) {
       accessor: "net_price",
       Cell: row => format("$,")(+row.value),
       sortMethod: (a, b) => +a - +b
+    },
+    {
+      accessor: "type",
+      show: false
     }
   ];
   ReactDOM.render(
     <DataTableWithSearch
       data={data["viz__3"]}
       columns={columns}
-      showSearch={true}
       showPagination={true}
-      title="All dat data"
     />,
     el
   );
