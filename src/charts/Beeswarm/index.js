@@ -15,11 +15,23 @@ class Beeswarm extends React.Component {
       search[option.value] = option;
     });
     this.setState({ search });
-    console.log(`Option selected:`, selectedOption);
   };
 
   render() {
     const { title, source, height } = this.props;
+    const selectStyles = {
+      control: (styles, state) => ({
+        ...styles,
+        backgroundColor: "white",
+        borderRadius: 0
+      }),
+      menu: styles => ({
+        ...styles,
+        borderRadius: 0,
+        boxShadow:
+          "0 2px 5px 0 rgba(0, 0, 0, 0.15), 0 2px 10px 0 rgba(0, 0, 0, 0.1)"
+      })
+    };
     return (
       <div className="chart">
         <div className="chart__meta-container">
@@ -28,6 +40,7 @@ class Beeswarm extends React.Component {
         <Select
           isMulti
           name="schools"
+          placeholder="Highlight a school..."
           options={this.props.data.map(d => {
             return { label: d.school, value: d.id };
           })}
@@ -37,6 +50,7 @@ class Beeswarm extends React.Component {
           ref={el => {
             this.selectRef = el;
           }}
+          styles={selectStyles}
         />
         <div
           className="chart__figure"
@@ -51,7 +65,7 @@ class Beeswarm extends React.Component {
               width === 0 ? null : (
                 <Swarm
                   width={width}
-                  height={width < 400 ? 1000 : height}
+                  height={height}
                   data={this.props.data}
                   search={this.state.search}
                 />
@@ -59,9 +73,9 @@ class Beeswarm extends React.Component {
             }
           </ParentSize>
         </div>
-        <div className="chart__meta-container">
+        {/* <div className="chart__meta-container">
           <span className="chart__source">Source: {source}</span>
-        </div>
+        </div> */}
       </div>
     );
   }
