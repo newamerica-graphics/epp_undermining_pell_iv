@@ -1,8 +1,17 @@
-@import '../../scss/colors';
-@import '../../scss/box-shadow';
-@import '../../scss/breakpoints';
-@import '../../scss/spacing';
+@import "../../scss/colors";
+@import "../../scss/box-shadow";
+@import "../../scss/breakpoints";
+@import "../../scss/spacing";
+@import "../../scss/widths";
 $desktop-padding: 25px;
+.ReactTable {
+  border: none;
+}
+
+.ReactTable .rt-table {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
 .ReactTable .rt-thead.-header {
   box-shadow: none;
 }
@@ -66,162 +75,74 @@ $desktop-padding: 25px;
   text-align: left;
 }
 
-.table {
-  width: 100% !important;
-  &__content {
-    a {
-      color: palette-get(na-black);
-      font-weight: bold;
-      border: none !important;
-      font-size: 14px !important;
-    }
-    span {
-      pointer-events: none;
-    }
-    &__hidden {
-      display: none;
-    }
-  }
-  &__popup {
-    position: absolute;
-    padding: 15px;
-    border: 2px solid palette-get(na-black-10);
-    background-color: white;
-    width: 300px;
-    color: palette-get(na-black-40);
-    line-height: 1.4rem;
-    &.hidden {
-      display: none;
-    }
-  }
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.table.dataTable th:first-child,
-table.dataTable tr td:first-child {
-  border-left: none !important;
+.pagination__number-of-entries {
+  font-size: 14px;
+  font-style: italic;
 }
 
-.dataTables_filter {
-  float: none !important;
-  text-align: left !important;
-  width: 300px;
-  label {
-    font-size: 0;
-    input {
-      font-size: 14px;
-      margin-bottom: $desktop-padding;
-      margin-left: 0px !important;
-    }
-  }
+.pagination__controls {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: $s3 0;
 }
 
-table.dataTable {
-  font-size: 14px !important;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  box-sizing: border-box;
-  border-spacing: 0px;
-  td {
-    color: palette-get(na-black-40);
-    &.sorting_1 {
-      color: palette-get(na-black);
-      font-weight: bold;
-    }
-    .passfailcheck {
-      width: 15px;
-      height: 15px;
-    }
-  }
-  a {
-    font-size: 14px !important;
-  }
-  th,
-  td {
-    padding: 10px; // min-width: 130px;
-    vertical-align: top;
-    text-align: left;
-    line-height: 1.3;
-    border-left: 1px solid palette-get(na-black-10) !important;
-    border-top: none !important;
-    border-bottom: none !important;
-    &:last-child {
-      border-right: none !important;
-    }
-  }
-  tr {
-    background-color: white;
-  }
-  tbody tr:nth-of-type(odd) {
-    background-color: palette-get(na-black-05) !important;
-  }
-  tbody tr:nth-of-type(even) {
-    background-color: white !important;
-  }
-  a {
-    border-bottom: none !important;
-  }
+.pagination__page-info {
+  display: flex;
+  align-items: center;
+  padding: 0 $s2;
+  font-size: 14px;
 }
 
-.dataTables_wrapper .dataTables_paginate .paginate_button {
-  border: none !important;
-  background: none !important;
-  color: palette-get(na-black-40) !important;
-  &:hover {
-    color: palette-get(na-turquoise) !important;
-    font-weight: bold !important;
-  }
-  &:focus {
-    border: none !important;
-    outline: none !important;
-  }
-  &.previous {
-    cursor: pointer !important;
-    &:hover {
-      color: palette-get(na-turquoise) !important;
-    }
-  }
-  &.current {
-    font-weight: bold;
-  }
+.pagination__page-jump input {
+  width: $w3;
+  height: $w2;
+  padding: 0 $s1;
+  margin: 0 $s2;
 }
 
-.dataTables_wrapper {
-  overflow-x: scroll !important;
+.pagination__total-pages {
+  padding-left: $s1;
 }
 
-table.dataTable thead th {
-  /*	padding: 10px 25px 10px 10px !important;
-*/
-  text-align: left;
-  border-bottom: none;
+.pagination__btn {
+  padding: 0 $s2;
+  font-size: 14px;
+  text-transform: capitalize;
+  font-weight: 700;
+  letter-spacing: normal;
+  color: palette-get(na-black);
+  outline: none;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.pagination__next .pagination__btn {
+  padding-right: 0;
+}
+
+.pagination__btn:hover {
+  color: palette-get(na-turquoise);
+}
+
+.pagination__btn:disabled:hover {
   color: palette-get(na-black);
 }
 
-// table.dataTable thead .sorting_asc {
-//   background-image: url("../images/sort_ascending.png");
-// }
-// table.dataTable thead .sorting_desc {
-//   background-image: url("../images/sort_descending.png");
-// }
-table.dataTable.DTFC_Cloned {
-  td:last-child,
-  th:last-child {
-    border-right: 1px solid palette-get(na-black-10) !important;
-  }
+.pagination__btn:disabled {
+  cursor: not-allowed;
 }
 
-/*.dataTables_wrapper {
-	max-width: calc(100% - 50px) !important;
-}
-*/
-
-.DTFC_LeftBodyWrapper,
-.DTFC_LeftHeadWrapper {
-  border-right: 2px solid palette-get(na-black-10) !important;
-}
-
-.DTFC_RightBodyWrapper,
-.DTFC_RightHeadWrapper {
-  border-left: 2px solid palette-get(na-black-10) !important;
+.Table__pageButton--active {
+  color: palette-get(na-black);
+  font-weight: bold;
 }
 
 .rt-th.rt-resizable-header.-sort-asc {
