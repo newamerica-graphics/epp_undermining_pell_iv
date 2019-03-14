@@ -12,6 +12,7 @@ const settings = {
     ReactDOM.render(
       <Beeswarm
         title={data["meta"].filter(row => row.chart === "viz__1")[0].title}
+        source={data["meta"].filter(row => row.chart === "viz__1")[0].source}
         data={data["viz__1"].map((d, i) => {
           return {
             school: d.school,
@@ -30,6 +31,7 @@ const settings = {
     ReactDOM.render(
       <ChoroplethMap
         title={data["meta"].filter(row => row.chart === "viz__2")[0].title}
+        source={data["meta"].filter(row => row.chart === "viz__2")[0].source}
         data={data["viz__2"]}
         width={1200}
         height={600}

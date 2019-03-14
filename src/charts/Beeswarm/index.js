@@ -73,9 +73,16 @@ class Beeswarm extends React.Component {
             }
           </ParentSize>
         </div>
-        {/* <div className="chart__meta-container">
-          <span className="chart__source">Source: {source}</span>
-        </div> */}
+        <div className="chart__meta-container">
+          <div className="chart__source">
+            <div style={{ lineHeight: "1.3" }}>
+              * Data from 2010-11 has been inflation adjusted to 2016.
+            </div>
+            <div style={{ lineHeight: "1.3", paddingTop: "1rem" }}>
+              Source: {source}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

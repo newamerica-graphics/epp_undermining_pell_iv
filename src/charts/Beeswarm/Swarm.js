@@ -8,17 +8,18 @@ import { Text } from "@vx/text";
 import { Marker } from "@vx/marker";
 import { Point } from "@vx/point";
 import memoizeOne from "memoize-one";
-import { selectAll } from "d3-selection";
 import { format } from "d3-format";
 import { max, median } from "d3-array";
 import { scaleLinear } from "d3-scale";
-import { localPoint } from '@vx/event';
+import { localPoint } from "@vx/event";
 import { forceSimulation, forceX, forceY, forceCollide } from "d3-force";
+import debounce from "debounce";
 import "./Swarm.scss";
 
 class Swarm extends React.Component {
   constructor(props) {
     super(props);
+    this.state = { hoverActive: false, hoveredItem: "" };
     this.margin = {
       top: 40,
       left: 50,
@@ -44,15 +45,23 @@ class Swarm extends React.Component {
       };
     });
     this.hoverTimeout = null;
+    this.debouncedMouseOver = debounce(this.handleMouseOver.bind(this), 300);
+    this.debouncedMouseOut = debounce(this.mouseOut.bind(this), 300);
   }
 
   handleMouseOver = (event, datum) => {
+    this.setState({ hoverActive: true, hoveredItem: datum.id });
     const coords = localPoint(event.target.ownerSVGElement, event);
     this.props.showTooltip({
       tooltipLeft: coords.x,
       tooltipTop: coords.y,
       tooltipData: datum
     });
+  };
+
+  mouseOut = () => {
+    this.setState({ hoverActive: false });
+    this.props.hideTooltip();
   };
 
   runSimulation = memoizeOne((xMax, height) => {
@@ -78,6 +87,7 @@ class Swarm extends React.Component {
 
   render() {
     const { width, height, search } = this.props;
+    const { hoverActive, hoveredItem } = this.state;
     const xMax = this.props.width - this.margin.left - this.margin.right;
     const yMax = this.props.height - this.margin.top - this.margin.bottom;
 
@@ -111,33 +121,38 @@ class Swarm extends React.Component {
                   cx={d.x}
                   cy={d.y}
                   fill={search.hasOwnProperty(d.id) ? "#FF2D44" : "#22C8A3"}
-                  stroke="rgba(51,51,51,0.6)"
+                  stroke={
+                    hoverActive && hoveredItem === d.id
+                      ? "#333"
+                      : !hoverActive && search.hasOwnProperty(d.id)
+                        ? "#333"
+                        : "rgba(51,51,51,0.6)"
+                  }
+                  strokeWidth={
+                    hoverActive && hoveredItem === d.id
+                      ? 2
+                      : !hoverActive && search.hasOwnProperty(d.id)
+                        ? 2
+                        : 1
+                  }
                   opacity={
-                    search.hasOwnProperty(d.id) ||
-                    Object.keys(search).length === 0
+                    hoverActive && hoveredItem === d.id
                       ? 1
-                      : 0.3
+                      : !hoverActive && search.hasOwnProperty(d.id)
+                        ? 1
+                        : !hoverActive && Object.keys(search).length === 0
+                          ? 1
+                          : 0.3
                   }
                   className={`id-${d.id}`}
                   onMouseEnter={e => {
-                    this.hoverTimeout = setTimeout(() => {
-                      selectAll(`circle`).classed("o-30", true);
-                      selectAll(`.id-${d.id}`)
-                        .classed("o-1", true)
-                        .classed("o-30", false);
-                    }, 300);
-                    selectAll(`.id-${d.id}`)
-                      .attr("stroke", "#111")
-                      .attr("stroke-width", 2);
-                    this.handleMouseOver(e, d)
+                    e.persist();
+                    this.debouncedMouseOver(e, d);
                   }}
-                  onMouseLeave={e => {
-                    clearTimeout(this.hoverTimeout);
-                    selectAll(`circle`).classed("o-30 o-1", false);
-                    selectAll(`.id-${d.id}`)
-                      .attr("stroke", "rgba(51,51,51,0.6)")
-                      .attr("stroke-width", 1);
+                  onMouseOut={e => {
+                    this.setState({ hoverActive: false });
                     this.props.hideTooltip();
+                    this.debouncedMouseOut();
                   }}
                 />
               );
@@ -181,33 +196,38 @@ class Swarm extends React.Component {
                   cx={d.x}
                   cy={d.y}
                   fill={search.hasOwnProperty(d.id) ? "#FF2D44" : "#22C8A3"}
+                  strokeWidth={
+                    hoverActive && hoveredItem === d.id
+                      ? 2
+                      : !hoverActive && search.hasOwnProperty(d.id)
+                        ? 2
+                        : 1
+                  }
                   opacity={
-                    search.hasOwnProperty(d.id) ||
-                    Object.keys(search).length === 0
+                    hoverActive && hoveredItem === d.id
                       ? 1
-                      : 0.4
+                      : !hoverActive && search.hasOwnProperty(d.id)
+                        ? 1
+                        : !hoverActive && Object.keys(search).length === 0
+                          ? 1
+                          : 0.3
                   }
                   className={`id-${d.id}`}
-                  stroke="rgba(51,51,51,0.6)"
+                  stroke={
+                    hoverActive && hoveredItem === d.id
+                      ? "#333"
+                      : !hoverActive && search.hasOwnProperty(d.id)
+                        ? "#333"
+                        : "rgba(51,51,51,0.6)"
+                  }
                   onMouseEnter={e => {
-                    this.hoverTimeout = setTimeout(() => {
-                      selectAll(`circle`).classed("o-30", true);
-                      selectAll(`.id-${d.id}`)
-                        .classed("o-1", true)
-                        .classed("o-30", false);
-                    }, 300);
-                    selectAll(`.id-${d.id}`)
-                      .attr("stroke", "#111")
-                      .attr("stroke-width", 2);
-                    this.handleMouseOver(e, d)
+                    e.persist();
+                    this.debouncedMouseOver(e, d);
                   }}
-                  onMouseLeave={e => {
-                    clearTimeout(this.hoverTimeout);
-                    selectAll(`circle`).classed("o-30 o-1", false);
-                    selectAll(`.id-${d.id}`)
-                      .attr("stroke", "rgba(51,51,51,0.6)")
-                      .attr("stroke-width", 1);
+                  onMouseOut={e => {
+                    this.setState({ hoverActive: false });
                     this.props.hideTooltip();
+                    this.debouncedMouseOut();
                   }}
                 />
               );
@@ -228,7 +248,7 @@ class Swarm extends React.Component {
               stroke={"#2C2F35"}
               label={`Median Price: ${format("$,.0f")(
                 median(this.data2010, d => d.price2010)
-              )}`}
+              )} *`}
               labelStroke={"none"}
               labelDx={6}
               labelDy={0}

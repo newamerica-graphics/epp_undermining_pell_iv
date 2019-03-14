@@ -102,4 +102,10 @@ const Choropleth = props => {
   );
 };
 
-export default withTooltip(Choropleth);
+export default withTooltip(Choropleth, {
+  style: {
+    position: "relative",
+    width: "auto",
+    height: "auto"
+  }
+});

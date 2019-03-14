@@ -22,6 +22,7 @@
 }
 
 .chart__meta-container {
+  padding: 1rem 0;
   max-width: 650px;
   margin-left: auto;
   margin-right: auto;
@@ -32,8 +33,14 @@
 }
 
 .chart__source {
-  font-size: 0.85rem;
+  font-size: 14px;
+  line-height: 1.3;
   color: #2c2f35;
+  p {
+    font-family: Circular;
+    font-size: 14px;
+    margin: 0;
+  }
 }
 
 svg {
